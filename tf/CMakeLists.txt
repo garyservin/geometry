@@ -4,9 +4,8 @@ project(tf)
 find_package(catkin REQUIRED)
 
 find_package(Boost COMPONENTS thread signals system REQUIRED)
-find_package(catkin COMPONENTS angles geometry_msgs message_filters message_generation rosconsole roscpp rostime sensor_msgs std_msgs tf2_ros REQUIRED)
+find_package(catkin COMPONENTS angles geometry_msgs message_filters message_generation roscpp rostime sensor_msgs std_msgs tf2_ros REQUIRED)
 
-catkin_python_setup()
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIR}
                            ${catkin_INCLUDE_DIRS}
@@ -22,7 +21,7 @@ generate_messages(DEPENDENCIES geometry_msgs sensor_msgs std_msgs)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS geometry_msgs message_filters message_runtime roscpp sensor_msgs std_msgs tf2_ros rosconsole
+  CATKIN_DEPENDS geometry_msgs message_filters message_runtime roscpp sensor_msgs std_msgs tf2_ros
 )
 
 add_library(${PROJECT_NAME} src/tf.cpp src/transform_listener.cpp src/cache.cpp src/transform_broadcaster.cpp)
@@ -98,66 +97,14 @@ target_link_libraries(testBroadcaster ${PROJECT_NAME})
 endif()
 
 
-#Python setup
-set(Python_ADDITIONAL_VERSIONS 2.7)
-find_package(PythonLibs REQUIRED)
-include_directories(${PYTHON_INCLUDE_PATH})
-
-# # If on Darwin, create a symlink _foo.so -> _foo.dylib, because the
-# # MacPorts version of Python won't find _foo.dylib for 'import _foo'
-# include(CMakeDetermineSystem)
-# if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-#   add_custom_command(OUTPUT ${LIBRARY_OUTPUT_PATH}/_${PROJECT_NAME}_swig.so
-#                      COMMAND cmake -E create_symlink  ${LIBRARY_OUTPUT_PATH}/_${PROJECT_NAME}_swig.dylib ${LIBRARY_OUTPUT_PATH}/_${PROJECT_NAME}_swig.so
-#                      DEPENDS python_${PROJECT_NAME})
-#   add_custom_target(symlink_darwin_lib ALL
-#                     DEPENDS ${LIBRARY_OUTPUT_PATH}/_${PROJECT_NAME}_swig.so)
-# endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-
-
-# Check for SSE
-#check_for_sse()
-
-# Dynamic linking with tf worked OK, except for exception propagation, which failed in the unit test.
-# so build with the objects directly instead.
-
-link_libraries(${PYTHON_LIBRARIES})
-add_library(pytf_py src/pytf.cpp src/tf.cpp src/transform_listener.cpp src/cache.cpp)
-add_dependencies(pytf_py ${PROJECT_NAME}_gencpp)
-
-find_package(PythonLibs REQUIRED)
-set_target_properties(pytf_py PROPERTIES OUTPUT_NAME tf PREFIX "_" SUFFIX ".so"
-  LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}/tf)
-
-# target_link_libraries(pytf_py ${PROJECT_NAME})
-# add_compile_flags(pytf_py -g -Wno-missing-field-initializers)
-#add_compile_flags(pytf_py ${SSE_FLAGS}) #conditionally adds sse flags if available
-# add_pyunit(test/testPython.py) 
-# DOES PYUNIT WORK IN CATKIN?
-target_link_libraries(pytf_py ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-
-if(CATKIN_ENABLE_TESTING)
-add_executable(tf_speed_test EXCLUDE_FROM_ALL test/speed_test.cpp)
-target_link_libraries(tf_speed_test ${PROJECT_NAME})
-endif()
-
-
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
 install(TARGETS ${PROJECT_NAME} tf_echo tf_empty_listener tf_change_notifier tf_monitor static_transform_publisher
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-install(TARGETS pytf_py
-  LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}/tf)
-
-# Install rosrun-able scripts
-install(PROGRAMS 
-  scripts/bullet_migration_sed.py
-  scripts/tf_remap
-  scripts/view_frames
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION} )
 
 # Need to install python msg and srv directories manually because genmsg
 # specifically avoids installing python message code if catkin_python_setup()
