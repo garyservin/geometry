@@ -44,58 +44,6 @@ target_link_libraries(tf_monitor ${PROJECT_NAME})
 add_executable(static_transform_publisher src/static_transform_publisher.cpp)
 target_link_libraries(static_transform_publisher ${PROJECT_NAME})
 
-# Tests
-if(CATKIN_ENABLE_TESTING)
-
-find_package(rostest)
-
-catkin_add_gtest(tf_unittest test/tf_unittest.cpp)
-target_link_libraries(tf_unittest ${PROJECT_NAME})
-
-catkin_add_gtest(tf_quaternion_unittest test/quaternion.cpp)
-target_link_libraries(tf_quaternion_unittest ${PROJECT_NAME})
-
-catkin_add_gtest(test_transform_datatypes test/test_transform_datatypes.cpp)
-target_link_libraries(test_transform_datatypes ${PROJECT_NAME} ${Boost_LIBRARIES})
-
-add_executable(transform_listener_unittest test/transform_listener_unittest.cpp)
-target_link_libraries(transform_listener_unittest ${PROJECT_NAME} ${GTEST_LIBRARIES})
-add_rostest(test/transform_listener_unittest.launch)
-
-# Disabled because of changes in TransformStorage
-#catkin_add_gtest_future(tf_unittest_future test/tf_unittest_future.cpp)
-#target_link_libraries(tf_unittest_future ${PROJECT_NAME})
-
-catkin_add_gtest(test_velocity test/velocity_test.cpp)
-target_link_libraries(test_velocity ${PROJECT_NAME})
-
-#add_executable(test_transform_twist test/transform_twist_test.cpp)
-#target_link_libraries(test_transform_twist ${PROJECT_NAME})
-#catkin_add_gtest_build_flags(test_transform_twist)
-#add_rostest(test/transform_twist_test.launch)
-
-catkin_add_gtest(cache_unittest test/cache_unittest.cpp)
-target_link_libraries(cache_unittest ${PROJECT_NAME})
-
-
-add_executable(test_message_filter EXCLUDE_FROM_ALL test/test_message_filter.cpp)
-target_link_libraries(test_message_filter tf ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
-add_rostest(test/test_message_filter.xml)
-
-
-### Benchmarking
-#catkin_add_gtest_future(tf_benchmark test/tf_benchmark.cpp)
-#target_link_libraries(tf_benchmark ${PROJECT_NAME})
-
-add_executable(testListener test/testListener.cpp)
-target_link_libraries(testListener ${PROJECT_NAME} ${GTEST_LIBRARIES})
-add_rostest(test/test_broadcaster.launch)
-
-add_executable(testBroadcaster test/testBroadcaster.cpp)
-target_link_libraries(testBroadcaster ${PROJECT_NAME})
-
-endif()
-
 
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
