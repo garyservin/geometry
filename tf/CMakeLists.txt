@@ -62,9 +62,3 @@ install(DIRECTORY ${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}/tf/msg
 install(DIRECTORY ${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}/tf/srv
   DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}/tf)
 
-
-if(TARGET tests)
-  add_dependencies(tests testBroadcaster testListener transform_listener_unittest test_message_filter )
-endif()
-
-
